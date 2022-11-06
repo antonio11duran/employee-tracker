@@ -83,86 +83,53 @@ function getEmployees() {
 
 // add a new department
 function newDepartment() {
-    app.post('/api/new-department', ({ body }, res) => {
-        const sql = `INSERT INTO department (name)
+    const sql = `INSERT INTO department (name)
     VALUES (?);`;
-        const params = [];
+    const params = [];
 
-        db.query(sql, params, (err, result) => {
-            if (err) {
-                res.status(400).json({ error: err.message });
-                return;
-            }
-            res.json({
-                message: 'success',
-                data: body
-            });
-        });
-    })
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        initQuestion();
+    });
 };
 
 // add a new role
 function newRole() {
-    app.post('/api/new-role', ({ body }, res) => {
-        const sql = `INSERT INTO role (title, salary, department_id)
+    const sql = `INSERT INTO role (title, salary, department_id)
     VALUES (?, ?, ?);`;
-        const params = [];
+    const params = [];
 
-        db.query(sql, params, (err, result) => {
-            if (err) {
-                res.status(400).json({ error: err.message });
-                return;
-            }
-            res.json({
-                message: 'success',
-                data: body
-            });
-        });
-    })
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        initQuestion();
+    });
 };
 
 // add a new employee
 function newEmployee() {
-    app.post('/api/new-employee', ({ body }, res) => {
-        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
     VALUES (?, ?, ?, ?);`;
-        const params = [];
+    const params = [];
 
-        db.query(sql, params, (err, result) => {
-            if (err) {
-                res.status(400).json({ error: err.message });
-                return;
-            }
-            res.json({
-                message: 'success',
-                data: body
-            });
-        });
-    })
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        initQuestion();
+    });
 };
 
 // update an employees role
 function updateRole() {
-    app.put('/api/employee/:id', (req, res) => {
-        const sql = `UPDATE employee SET role_id = ? WHERE id = ?;`;
-        const params = [];
+    const sql = `UPDATE employee SET role_id = ? WHERE id = ?;`;
+    const params = [];
 
-        db.query(sql, params, (err, result) => {
-            if (err) {
-                res.status(400).json({ error: err.message });
-            } else if (!result.affectedRows) {
-                res.json({
-                    message: 'Employee not found'
-                });
-            } else {
-                res.json({
-                    message: 'success',
-                    data: req.body,
-                    changes: result.affectedRows
-                });
-            }
-        });
-    })
+    db.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        initQuestion();
+    });
 };
 
 app.use((req, res) => {
