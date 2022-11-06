@@ -55,7 +55,11 @@ app.get('/api/roles', (req, res) => {
 
 // get all employees
 app.get('/api/employees', (req, res) => {
-    const sql = ``;
+    const sql = `SELECT employee.id, concat(employee.first_name, ' ', employee.last_name) AS name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id;`;
 
     db.query(sql, (err, rows) => {
         if (err) {
@@ -71,7 +75,8 @@ app.get('/api/employees', (req, res) => {
 
 // add a new department
 app.post('/api/new-department', ({ body }, res) => {
-    const sql = ``;
+    const sql = `INSERT INTO department (name)
+    VALUES (?);`;
     const params = [];
 
     db.query(sql, params, (err, result) => {
@@ -88,7 +93,8 @@ app.post('/api/new-department', ({ body }, res) => {
 
 // add a new role
 app.post('/api/new-role', ({ body }, res) => {
-    const sql = ``;
+    const sql = `INSERT INTO role (title, salary, department_id)
+    VALUES (?, ?, ?);`;
     const params = [];
 
     db.query(sql, params, (err, result) => {
@@ -105,7 +111,8 @@ app.post('/api/new-role', ({ body }, res) => {
 
 // add a new employee
 app.post('/api/new-employee', ({ body }, res) => {
-    const sql = ``;
+    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES (?, ?, ?, ?);`;
     const params = [];
 
     db.query(sql, params, (err, result) => {
