@@ -25,8 +25,31 @@ const db = mysql.createConnection(
 const choiceArray = ['Show all departments', 'Show all roles', 'Show all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employees role'];
 const functionArray = [getDepartments, getRoles, getEmployees, newDepartment, newRole, newEmployee, updateRole];
 const departmentArray = ["Sales", "Engineering", "Finance", "Legal"];
-const roleArray = [];
-const employeeArray = []
+const roleArray = ["Sales Lead",
+    "Salesperson",
+    "Junior Salesperson",
+    "Senior Engineer",
+    "Engineer",
+    "Junior Engineer",
+    "Head Accountant",
+    "Accountant",
+    "Junior Accountant",
+    "Head of Legal",
+    "Lawyer",
+    "Paralegal"];
+const employeeArray = ["None",
+    "Meredith Grey",
+    "Maggie Pierce",
+    "Mika Yasuda",
+    "Nova Duran",
+    "Levi Schmitt",
+    "Simone Griffith",
+    "Luna Duran",
+    "Sara Ellis",
+    "Alex Karev",
+    "Emily Gamel",
+    "Amelia Shepard",
+    "John Smith"]
 
 function initQuestion() {
     inquirer
@@ -137,7 +160,7 @@ function newRole() {
                 VALUES (?, ?, ?);`;
                     const params = [response.roleName, response.money, (i + 1)];
                     roleArray.push(response.roleName);
-        
+
                     db.query(sql, params, (err, rows) => {
                         if (err) throw err;
                         initQuestion();
@@ -149,15 +172,63 @@ function newRole() {
 
 // add a new employee
 function newEmployee() {
-    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-    VALUES (?, ?, ?, ?);`;
-    const params = [];
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                message: "What is the new employee's first name?",
+                name: "firstName"
+            },
+            {
+                type: "input",
+                message: "What is the new employee's last name?",
+                name: "lastName"
+            },
+            {
+                type: "list",
+                message: "What role will this employee be doing?",
+                choices: roleArray,
+                name: "employeeRole"
+            },
+            {
+                type: "list",
+                message: "Who is the manager of this employee?",
+                choices: employeeArray,
+                name: "employeeManager"
+            }
+        ])
+        .then((response) => {
+            for (let i = 0; i < roleArray.length; i++) {
+                if (response.employeeRole === roleArray[i]) {
+                    const empRole = i + 1
+                    if (response.employeeManager === employeeArray[0]) {
+                        const sql = `INSERT INTO employee (first_name, last_name, role_id)
+                            VALUES (?, ?, ?);`;
+                        const params = [response.firstName, response.lastName, empRole];
+                        employeeArray.push(response.firstName + ' ' + response.lastName);
 
-    db.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);
-        initQuestion();
-    });
+                        db.query(sql, params, (err, rows) => {
+                            if (err) throw err;
+                            return initQuestion();
+                        });
+                    }
+                    for (let h = 1; h < employeeArray.length; h++) {
+                        if (response.employeeManager === employeeArray[h] && response.employeeManager !== "None") {
+                            const empManage = h;
+                            const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                            VALUES (?, ?, ?, ?);`;
+                            const params = [response.firstName, response.lastName, empRole, empManage];
+                            employeeArray.push(response.firstName + ' ' + response.lastName);
+
+                            db.query(sql, params, (err, rows) => {
+                                if (err) throw err;
+                                return initQuestion();
+                            });
+                        }
+                    }
+                }
+            }
+        })
 };
 
 // update an employees role
