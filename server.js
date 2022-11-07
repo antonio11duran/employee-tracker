@@ -83,15 +83,25 @@ function getEmployees() {
 
 // add a new department
 function newDepartment() {
-    const sql = `INSERT INTO department (name)
-    VALUES (?);`;
-    const params = [];
+    inquirer
+    .prompt([
+        {
+            type: "input",
+            message: "What is the new department name?",
+            name: "department"
+        }
+    ])
+    .then((response) => {
+        const sql = `INSERT INTO department (name)
+        VALUES (?);`;
+        const params = [response.department];
+    
+        db.query(sql, params, (err, rows) => {
+            if (err) throw err;
+            initQuestion();
+        });
 
-    db.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);
-        initQuestion();
-    });
+    })
 };
 
 // add a new role
