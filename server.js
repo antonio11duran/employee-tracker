@@ -233,14 +233,38 @@ function newEmployee() {
 
 // update an employees role
 function updateRole() {
-    const sql = `UPDATE employee SET role_id = ? WHERE id = ?;`;
-    const params = [];
-
-    db.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);
-        initQuestion();
-    });
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                message: "Which employee would you like to update?",
+                choices: employeeArray,
+                name: "updateName"
+            },
+            {
+                type: "list",
+                message: "What is the new role for this employee?",
+                choices: roleArray,
+                name: "updateRole"
+            }
+        ])
+        .then((response) => {
+            for (let i = 1; i < employeeArray.length; i++) {
+                if (response.updateName === employeeArray[i]) {
+                    for (let h = 0; h < roleArray.length; h++) {
+                        if (response.updateRole === roleArray[h]) {
+                            const sql = `UPDATE employee SET role_id = ? WHERE id = ?;`;
+                            const params = [h + 1, i];
+    
+                            db.query(sql, params, (err, rows) => {
+                                if (err) throw err;
+                                initQuestion();
+                            });
+                        }
+                    }
+                }
+            }
+        })
 };
 
 app.use((req, res) => {
