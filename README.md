@@ -1,5 +1,7 @@
 # Employee Tracker
 
+Walkthrough Video Here: <https://drive.google.com/file/d/1T75h_NW85kQgPdallsZTZhXV1wpUYaOE/view>
+
 ## Description
 
 This app lets you access the departments, roles, and employees of a company from a sql database. It allows you to view the three things above, as well as adding a new department, role, and employee. You are also able to update the role of an employee.
