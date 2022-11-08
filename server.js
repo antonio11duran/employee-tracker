@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const { response } = require('express');
+const cfonts = require('cfonts');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -19,8 +20,13 @@ const db = mysql.createConnection(
         password: '',
         database: 'employee_db'
     },
-    console.log(`Connected to the employee_db database.`)
+    console.log(`Connected to the employee_db database.`),
 );
+
+cfonts.say('Employee|Tracker', {
+    align: 'center',
+    gradient: ['red','blue']
+});
 
 const choiceArray = ['Show all departments', 'Show all roles', 'Show all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employees role'];
 const functionArray = [getDepartments, getRoles, getEmployees, newDepartment, newRole, newEmployee, updateRole];
@@ -77,6 +83,7 @@ function getDepartments() {
 
     db.query(sql, (err, rows) => {
         if (err) throw err;
+        console.log('All Departments Below:');
         console.table(rows);
         initQuestion();
     });
@@ -84,10 +91,11 @@ function getDepartments() {
 
 // get all roles
 function getRoles() {
-    const sql = `SELECT department.name AS department, role.title, role.salary FROM role INNER JOIN department ON department.id=role.department_id;`;
+    const sql = `SELECT role.id, department.name AS department, role.title, role.salary FROM role INNER JOIN department ON department.id=role.department_id;`;
 
     db.query(sql, (err, rows) => {
         if (err) throw err;
+        console.log('All Roles Below:');
         console.table(rows);
         initQuestion();
     });
@@ -103,6 +111,7 @@ function getEmployees() {
 
     db.query(sql, (err, rows) => {
         if (err) throw err;
+        console.log('All Employees Below:');
         console.table(rows);
         initQuestion();
     });
@@ -126,6 +135,7 @@ function newDepartment() {
 
             db.query(sql, params, (err, rows) => {
                 if (err) throw err;
+                console.log(`The new ${response.department} department has been added.`);
                 initQuestion();
             });
 
@@ -163,6 +173,7 @@ function newRole() {
 
                     db.query(sql, params, (err, rows) => {
                         if (err) throw err;
+                        console.log(`The new ${response.roleName} has been added.`);
                         initQuestion();
                     });
                 }
@@ -222,7 +233,8 @@ function newEmployee() {
 
                             db.query(sql, params, (err, rows) => {
                                 if (err) throw err;
-                                return initQuestion();
+                                console.log(`A new employee has been added! Their name is ${response.firstName} ${response.lastName}.`);
+                                initQuestion();
                             });
                         }
                     }
@@ -255,9 +267,10 @@ function updateRole() {
                         if (response.updateRole === roleArray[h]) {
                             const sql = `UPDATE employee SET role_id = ? WHERE id = ?;`;
                             const params = [h + 1, i];
-    
+
                             db.query(sql, params, (err, rows) => {
                                 if (err) throw err;
+                                console.log(`${response.updateName}'s role has been updated to ${response.updateRole}`);
                                 initQuestion();
                             });
                         }

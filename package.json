@@ -18,10 +18,10 @@
   },
   "homepage": "https://github.com/antonio11duran/employee-tracker#readme",
   "dependencies": {
+    "cfonts": "^3.1.1",
     "console.table": "^0.10.0",
     "express": "^4.18.2",
     "inquirer": "8.2.4",
     "mysql2": "^2.3.3"
-  },
-  "devDependencies": {}
+  }
 }
